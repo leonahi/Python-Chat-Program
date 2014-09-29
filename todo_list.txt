@@ -1,0 +1,2 @@
+1. ConfigParser.
+2. Fixing data folder error for Linux dist.

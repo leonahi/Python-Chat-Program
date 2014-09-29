@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>435</width>
+    <height>621</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Chatbox</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QTextBrowser" name="textBrowser"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="lineEdit"/>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QRadioButton" name="radioButton">
+          <property name="text">
+           <string>Client</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_2">
+          <property name="text">
+           <string>Server</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Connect</string>
+        </property>
+        <property name="autoDefault">
+         <bool>true</bool>
+        </property>
+        <property name="default">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>435</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="action_save_chat"/>
+    <addaction name="action_change_username"/>
+    <addaction name="action_exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Connect">
+    <property name="title">
+     <string>C&amp;onnect</string>
+    </property>
+    <addaction name="action_quick_connect"/>
+    <addaction name="action_connect_to_port"/>
+    <addaction name="action_disconnect"/>
+   </widget>
+   <widget class="QMenu" name="menu_Server">
+    <property name="title">
+     <string>&amp;Server</string>
+    </property>
+    <addaction name="action_launch_server"/>
+    <addaction name="action_listen_to_port"/>
+   </widget>
+   <widget class="QMenu" name="menuContacts">
+    <property name="title">
+     <string>&amp;Contacts...</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menu_Connect"/>
+   <addaction name="menu_Server"/>
+   <addaction name="menuContacts"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="action_save_chat">
+   <property name="text">
+    <string>&amp;Save Chat...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save chat to a text file...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_change_username">
+   <property name="text">
+    <string>Change &amp;username...</string>
+   </property>
+   <property name="toolTip">
+    <string>Change your name as visible to others...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="action_exit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+   <property name="toolTip">
+    <string>Close this chat box...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="action_quick_connect">
+   <property name="text">
+    <string>&amp;Quick Connect...</string>
+   </property>
+  </action>
+  <action name="action_connect_to_port">
+   <property name="text">
+    <string>Connect to &amp;Port...</string>
+   </property>
+  </action>
+  <action name="action_disconnect">
+   <property name="text">
+    <string>&amp;Disconnect</string>
+   </property>
+  </action>
+  <action name="action_launch_server">
+   <property name="text">
+    <string>&amp;Launch server</string>
+   </property>
+  </action>
+  <action name="action_listen_to_port">
+   <property name="text">
+    <string>Listen to &amp;Port...</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>action_exit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>217</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
