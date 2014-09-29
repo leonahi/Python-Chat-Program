@@ -120,7 +120,7 @@ def netCatch(conn, secret):
     """
     try:
         if operating_sys == "Windows":
-            winsound.Beep(400, 100)
+            winsound.PlaySound("SystemExit", winsound.SND_ALIAS)
         data = conn.recv(4)
         if data.decode()[0] == '-':
             processFlag(data.decode(), conn)
