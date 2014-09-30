@@ -16,7 +16,7 @@ if version == 2:
 if version == 3:
     from tkinter import *
     from tkinter.filedialog import asksaveasfilename
-	
+
 import threading
 import socket
 import random
@@ -26,7 +26,7 @@ import platform
 
 operating_sys = platform.system() 
 if operating_sys == "Windows":
-	import winsound
+    import winsound
 
 	
 # GLOBALS
