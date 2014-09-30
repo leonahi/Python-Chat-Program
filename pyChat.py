@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 
 #if not sys.hexversion > 0x03000000:
@@ -97,7 +98,7 @@ class Server (threading.Thread):
 
         global statusConnect
         statusConnect.set("Disconnect")
-        connecter.config(state=NORMAL)
+        uitk.connecter.config(state=NORMAL)
 
         # create the numbers for my encryption
         prime = random.randint(1000, 9000)
@@ -160,12 +161,12 @@ class Client (threading.Thread):
             conn_init.connect((self.host, self.port))
         except socket.timeout:
             writeToScreen("Timeout issue. Host possible not there.", "System")
-            connecter.config(state=NORMAL)
+            uitk.connecter.config(state=NORMAL)
             raise SystemExit(0)
         except socket.error:
             writeToScreen(
                 "Connection issue. Host actively refused connection.", "System")
-            connecter.config(state=NORMAL)
+            uitk.connecter.config(state=NORMAL)
             raise SystemExit(0)
         porta = conn_init.recv(5)
         porte = int(porta.decode())
@@ -178,7 +179,7 @@ class Client (threading.Thread):
 
         global statusConnect
         statusConnect.set("Disconnect")
-        connecter.config(state=NORMAL)
+        uitk.connecter.config(state=NORMAL)
 
         conn_array.append(conn)
         # get my base, prime, and A values
@@ -328,7 +329,7 @@ def processFlag(number, conn=None):
                 print("Issue with someone being bad about disconnecting")
             if not isCLI:
                 statusConnect.set("Connect")
-                connecter.config(state=NORMAL)
+                uitk.connecter.config(state=NORMAL)
             return
 
         if conn != None:
@@ -510,30 +511,6 @@ def server_options_go(port, window):
 
 #-------------------------------------------------------------------------
 
-def username_options_window(master):
-    """Launches username options window for setting username."""
-    top = Toplevel(master)
-    top.title("Username options")
-    top.grab_set()
-    Label(top, text="Username:").grid(row=0)
-    name = Entry(top)
-    name.focus_set()
-    name.grid(row=0, column=1)
-    go = Button(top, text="Change", command=lambda:
-                username_options_go(name.get(), top))
-    go.grid(row=1, column=1)
-
-
-def username_options_go(name, window):
-    """Processes the options entered by the user in the
-    server options window.
-
-    """
-    processUserCommands("nick", [name])
-    window.destroy()
-
-#-------------------------------------------------------------------------
-
 def error_window(master, texty):
     """Launches a new window to display the message texty."""
     global isCLI
@@ -549,7 +526,7 @@ def error_window(master, texty):
         go.focus_set()
 
 def optionDelete(window):
-    connecter.config(state=NORMAL)
+    uitk.connecter.config(state=NORMAL)
     window.destroy()
 
 def load_contacts():
@@ -598,7 +575,6 @@ def placeText(text):
 
 def writeToScreen(text, username=""):
     """Places text to main text body in format "username: text"."""
-    global main_body_text
     global isCLI
     if isCLI:
         if username:
@@ -606,13 +582,13 @@ def writeToScreen(text, username=""):
         else:
             print(text)
     else:
-        main_body_text.config(state=NORMAL)
-        main_body_text.insert(END, '\n')
+        uitk.main_body_text.config(state=NORMAL)
+        uitk.main_body_text.insert(END, '\n')
         if username:
-            main_body_text.insert(END, username + ": ")
-        main_body_text.insert(END, text)
-        main_body_text.yview(END)
-        main_body_text.config(state=DISABLED)
+            uitk.main_body_text.insert(END, username + ": ")
+        uitk.main_body_text.insert(END, text)
+        uitk.main_body_text.yview(END)
+        uitk.main_body_text.config(state=DISABLED)
 
 def processUserText(event):
     """Takes text from text bar input and calls processUserCommands if it
@@ -672,33 +648,16 @@ def QuickServer():
     """Quickstarts a server."""
     Server(9999).start()
 
-def saveHistory():
-    """Saves history with Tkinter's asksaveasfilename dialog."""
-    global main_body_text
-    file_name = asksaveasfilename(
-        title="Choose save location",
-        filetypes=[('Plain text', '*.txt'), ('Any File', '*.*')])
-    try:
-        filehandle = open(file_name + ".txt", "w")
-    except IOError:
-        print("Can't save history.")
-        return
-    contents = main_body_text.get(1.0, END)
-    for line in contents:
-        filehandle.write(line)
-    filehandle.close()
-
-
-def connects(clientType):
+def connects(clientType, root):
     global conn_array
-    connecter.config(state=DISABLED)
+    uitk.connecter.config(state=DISABLED)
     if len(conn_array) == 0:
         if clientType == 0:
             client_options_window(root)
         if clientType == 1:
             server_options_window(root)
     else:
-        # connecter.config(state=NORMAL)
+        # uitk.connecter.config(state=NORMAL)
         for connection in conn_array:
             connection.send("-001".encode())
         processFlag("-001")
@@ -721,5 +680,9 @@ if len(sys.argv) > 1 and sys.argv[1] == "-cli":
     print("Starting command line chat")
 else:
     load_contacts()
-    ui_tk(QuickClient, QuickServer, processUserText, toOne, toTwo, connects)
+    uitk = ui_tk(QuickClient, QuickServer, processUserText, toOne, toTwo, connects, processFlag, processUserCommands, client_options_window,)
+    uitk.run()
+    # XXX> in this module, the functions directly access uitk for its internal
+    # objects; avoid this; let the functions take an aruemnt as an option & process it!
+    # avoid use of global variables!!
     dump_contacts()

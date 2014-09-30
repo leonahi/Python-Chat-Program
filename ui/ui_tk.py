@@ -87,7 +87,7 @@ def contacts_add_helper(username, ip, port, window, listbox):
     """
     for letter in username:
         if letter == " " or letter == "\n":
-            error_window(root, "Invalid username. No spaces allowed.")
+            error_window(self.root, "Invalid username. No spaces allowed.")
             return
     if options_sanitation(port, ip):
         listbox.insert(END, username + " " + ip + " " + port)
@@ -96,70 +96,115 @@ def contacts_add_helper(username, ip, port, window, listbox):
         return
 
 
-def ui_tk(QuickClient, QuickServer, processUserText, toOne, toTwo, connects):
+class ui_tk(object):
 
-    root = Tk()
-    root.title("Chat")
+    def __init__(self, QuickClient, QuickServer, processUserText, toOne,
+                 toTwo, connects, processFlag, processUserCommands,
+                 client_options_window):
 
-    menubar = Menu(root)
+        self.root = Tk()
+        self.root.title("Chat")
 
-    file_menu = Menu(menubar, tearoff=0)
-    file_menu.add_command(label="Save chat", command=lambda: saveHistory())
-    file_menu.add_command(label="Change username",
-                          command=lambda: username_options_window(root))
-    file_menu.add_command(label="Exit", command=lambda: root.destroy())
-    menubar.add_cascade(label="File", menu=file_menu)
+        self.menubar = Menu(self.root)
 
-    connection_menu = Menu(menubar, tearoff=0)
-    connection_menu.add_command(label="Quick Connect", command=QuickClient)
-    connection_menu.add_command(
-        label="Connect on port", command=lambda: client_options_window(root))
-    connection_menu.add_command(
-        label="Disconnect", command=lambda: processFlag("-001"))
-    menubar.add_cascade(label="Connect", menu=connection_menu)
+        file_menu = Menu(self.menubar, tearoff=0)
+        file_menu.add_command(label="Save chat", command=lambda: self.saveHistory())
+        file_menu.add_command(label="Change username",
+                              command=lambda: self.username_options_window())
+        file_menu.add_command(label="Exit", command=lambda: self.root.destroy())
+        self.menubar.add_cascade(label="File", menu=file_menu)
 
-    server_menu = Menu(menubar, tearoff=0)
-    server_menu.add_command(label="Launch server", command=QuickServer)
-    server_menu.add_command(label="Listen on port",
-                            command=lambda: server_options_window(root))
-    menubar.add_cascade(label="Server", menu=server_menu)
+        connection_menu = Menu(self.menubar, tearoff=0)
+        connection_menu.add_command(label="Quick Connect", command=QuickClient)
+        connection_menu.add_command(
+            label="Connect on port", command=lambda: client_options_window(self.root))
+        connection_menu.add_command(
+            label="Disconnect", command=lambda: processFlag("-001"))
+        self.menubar.add_cascade(label="Connect", menu=connection_menu)
 
-    menubar.add_command(label="Contacts", command=lambda:
-                        contacts_window(root))
+        server_menu = Menu(self.menubar, tearoff=0)
+        server_menu.add_command(label="Launch server", command=QuickServer)
+        server_menu.add_command(label="Listen on port",
+                                command=lambda: server_options_window(self.root))
+        self.menubar.add_cascade(label="Server", menu=server_menu)
 
-    root.config(menu=menubar)
+        self.menubar.add_command(label="Contacts", command=lambda:
+                            contacts_window(self.root))
 
-    main_body = Frame(root, height=20, width=50)
+        self.root.config(menu=self.menubar)
 
-    main_body_text = Text(main_body)
-    body_text_scroll = Scrollbar(main_body)
-    main_body_text.focus_set()
-    body_text_scroll.pack(side=RIGHT, fill=Y)
-    main_body_text.pack(side=LEFT, fill=Y)
-    body_text_scroll.config(command=main_body_text.yview)
-    main_body_text.config(yscrollcommand=body_text_scroll.set)
-    main_body.pack()
+        main_body = Frame(self.root, height=20, width=50)
 
-    main_body_text.insert(END, "Welcome to the chat program!")
-    main_body_text.config(state=DISABLED)
+        self.main_body_text = Text(main_body)
+        body_text_scroll = Scrollbar(main_body)
+        self.main_body_text.focus_set()
+        body_text_scroll.pack(side=RIGHT, fill=Y)
+        self.main_body_text.pack(side=LEFT, fill=Y)
+        body_text_scroll.config(command=self.main_body_text.yview)
+        self.main_body_text.config(yscrollcommand=body_text_scroll.set)
+        main_body.pack()
 
-    text_input = Entry(root, width=60)
-    text_input.bind("<Return>", processUserText)
-    text_input.pack()
+        self.main_body_text.insert(END, "Welcome to the chat program!")
+        self.main_body_text.config(state=DISABLED)
 
-    statusConnect = StringVar()
-    statusConnect.set("Connect")
-    clientType = 1
-    Radiobutton(root, text="Client", variable=clientType,
-                value=0, command=toOne).pack(anchor=E)
-    Radiobutton(root, text="Server", variable=clientType,
-                value=1, command=toTwo).pack(anchor=E)
-    connecter = Button(root, textvariable=statusConnect,
-                       command=lambda: connects(clientType))
-    connecter.pack()
+        text_input = Entry(self.root, width=60)
+        text_input.bind("<Return>", processUserText)
+        text_input.pack()
 
-#    load_contacts()
+        statusConnect = StringVar()
+        statusConnect.set("Connect")
+        clientType = 1
+        Radiobutton(self.root, text="Client", variable=clientType,
+                    value=0, command=toOne).pack(anchor=E)
+        Radiobutton(self.root, text="Server", variable=clientType,
+                    value=1, command=toTwo).pack(anchor=E)
+        self.connecter = Button(self.root, textvariable=statusConnect,
+                           command=lambda: connects(clientType, self.root))
+        self.connecter.pack()
 
-#------------------------------------------------------------#
+        # XXX. dont like doing this... get over this somehow
+        self.processUserCommands = processUserCommands
 
-    root.mainloop()
+    #    load_contacts()
+
+    #------------------------------------------------------------#
+
+    def run(self):
+        self.root.mainloop()
+
+    def saveHistory(self):
+        """Saves history with Tkinter's asksaveasfilename dialog."""
+        file_name = asksaveasfilename(
+            title="Choose save location",
+            filetypes=[('Plain text', '*.txt'), ('Any File', '*.*')])
+        try:
+            filehandle = open(file_name + ".txt", "w")
+        except IOError:
+            print("Can't save history.")
+            return
+        contents = self.main_body_text.get(1.0, END)
+        for line in contents:
+            filehandle.write(line)
+        filehandle.close()
+
+
+    def username_options_window(self):
+        """Launches username options window for setting username."""
+        top = Toplevel(self.root)
+        top.title("Username options")
+        top.grab_set()
+        Label(top, text="Username:").grid(row=0)
+        name = Entry(top)
+        name.focus_set()
+        name.grid(row=0, column=1)
+        go = Button(top, text="Change", command=lambda:
+                    self.username_options_go(name.get(), top))
+        go.grid(row=1, column=1)
+
+    def username_options_go(self, name, window):
+        """Processes the options entered by the user in the
+        server options window.
+
+        """
+        self.processUserCommands("nick", [name])
+        window.destroy()
