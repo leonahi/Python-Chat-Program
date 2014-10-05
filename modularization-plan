@@ -1,0 +1,8 @@
+follow these steps to get modular code -
+1. separate the tk specific code and netowrking code.
+2. avoid use of global variables; keep everything passable!
+3. put gui specific functions into the ui_tk class! 
+2. clean the code a bit, if rerquired to simplify it.
+3. integrate pyqt4 with the same code main code.
+4. make sure the code works with both tk and pyqt4 as expected
+5. start improving the pyqt4 gui by adding commonly used gui features (refer to aakriti project for pyqt4 gui code, if req.)

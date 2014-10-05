@@ -96,8 +96,8 @@ class Server (threading.Thread):
         conn_array.append(conn)  # add an array entry for this connection
         writeToScreen("Connected by " + str(addr[0]), "System")
 
-        global statusConnect
-        statusConnect.set("Disconnect")
+#        global statusConnect
+        uitk.statusConnect.set("Disconnect")
         uitk.connecter.config(state=NORMAL)
 
         # create the numbers for my encryption
@@ -177,8 +177,8 @@ class Client (threading.Thread):
         writeToScreen("Connected to: " + self.host +
                       " on port: " + str(porte), "System")
 
-        global statusConnect
-        statusConnect.set("Disconnect")
+#        global statusConnect
+        uitk.statusConnect.set("Disconnect")
         uitk.connecter.config(state=NORMAL)
 
         conn_array.append(conn)
@@ -309,7 +309,6 @@ def processFlag(number, conn=None):
     if necessary.
 
     """
-    global statusConnect
     global conn_array
     global secret_array
     global username_array
@@ -328,7 +327,7 @@ def processFlag(number, conn=None):
             except socket.error:
                 print("Issue with someone being bad about disconnecting")
             if not isCLI:
-                statusConnect.set("Connect")
+                uitk.statusConnect.set("Connect")
                 uitk.connecter.config(state=NORMAL)
             return
 
@@ -356,7 +355,7 @@ def processFlag(number, conn=None):
         Client(data.decode(),
                int(contact_array[conn.getpeername()[0]][0])).start()
 
-def processUserCommands(command, param):
+def processUserCommands(command, param, root):
     """Processes commands passed in via the / text input."""
     global conn_array
     global secret_array
@@ -438,23 +437,24 @@ def client_options_window(master):
 
 def client_options_go(dest, port, window):
     "Processes the options entered by the user in the client options window."""
-    if options_sanitation(port, dest):
+    if options_sanitation(port, dest, window):
         if not isCLI:
             window.destroy()
         Client(dest, int(port)).start()
     elif isCLI:
         sys.exit(1)
 
-def options_sanitation(por, loc=""):
+def options_sanitation(por, loc, root):
     """Checks to make sure the port and destination ip are both valid.
     Launches error windows if there are any issues.
 
     """
-    global root
+#    global root
 #    if python_version == 2:
     por = unicode(por)
     if isCLI:
-        root = 0
+        raise NotImplementedError
+#        root = 0
     if not por.isnumeric():
         error_window(root, "Please input a port number.")
         return False
@@ -497,14 +497,14 @@ def server_options_window(master):
                 server_options_go(port.get(), top))
     go.grid(row=1, column=1)
 
-def server_options_go(port, window):
+def server_options_go(port, root):
     """Processes the options entered by the user in the
     server options window.
 
     """
-    if options_sanitation(port):
+    if options_sanitation(port, "", root):
         if not isCLI:
-            window.destroy()
+            root.destroy()
         Server(int(port)).start()
     elif isCLI:
         sys.exit(1)
@@ -590,12 +590,12 @@ def writeToScreen(text, username=""):
         uitk.main_body_text.yview(END)
         uitk.main_body_text.config(state=DISABLED)
 
-def processUserText(event):
+def processUserText(event, root):
     """Takes text from text bar input and calls processUserCommands if it
     begins with '/'.
 
     """
-    data = text_input.get()
+    data = uitk.text_input.get()
     if data[0] != "/":  # is not a command
         placeText(data)
     else:
@@ -604,8 +604,8 @@ def processUserText(event):
         else:
             command = data[1:data.find(" ")]
         params = data[data.find(" ") + 1:].split(" ")
-        processUserCommands(command, params)
-    text_input.delete(0, END)
+        processUserCommands(command, params, root)
+    uitk.text_input.delete(0, END)
 
 
 def processUserInput(text):
@@ -631,7 +631,7 @@ def Runner(conn, secret):
 #-------------------------------------------------------------------------
 # Menu helpers
 
-def QuickClient():
+def QuickClient(root):
     """Menu window for connection options."""
     window = Toplevel(root)
     window.title("Connection options")

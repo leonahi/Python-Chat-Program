@@ -115,7 +115,7 @@ class ui_tk(object):
         self.menubar.add_cascade(label="File", menu=file_menu)
 
         connection_menu = Menu(self.menubar, tearoff=0)
-        connection_menu.add_command(label="Quick Connect", command=QuickClient)
+        connection_menu.add_command(label="Quick Connect", command=lambda: QuickClient(self.root))
         connection_menu.add_command(
             label="Connect on port", command=lambda: client_options_window(self.root))
         connection_menu.add_command(
@@ -147,18 +147,18 @@ class ui_tk(object):
         self.main_body_text.insert(END, "Welcome to the chat program!")
         self.main_body_text.config(state=DISABLED)
 
-        text_input = Entry(self.root, width=60)
-        text_input.bind("<Return>", processUserText)
-        text_input.pack()
+        self.text_input = Entry(self.root, width=60)
+        self.text_input.bind("<Return>", lambda(event): processUserText(event, self.root))
+        self.text_input.pack()
 
-        statusConnect = StringVar()
-        statusConnect.set("Connect")
+        self.statusConnect = StringVar()
+        self.statusConnect.set("Connect")
         clientType = 1
         Radiobutton(self.root, text="Client", variable=clientType,
                     value=0, command=toOne).pack(anchor=E)
         Radiobutton(self.root, text="Server", variable=clientType,
                     value=1, command=toTwo).pack(anchor=E)
-        self.connecter = Button(self.root, textvariable=statusConnect,
+        self.connecter = Button(self.root, textvariable=self.statusConnect,
                            command=lambda: connects(clientType, self.root))
         self.connecter.pack()
 
