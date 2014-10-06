@@ -21,6 +21,7 @@ import threading
 import socket
 import random
 import math
+import time
 
 import platform
 
@@ -726,7 +727,7 @@ class Client (threading.Thread):
 def Runner(conn, secret):
     global username_array
     while 1:
-        data = netCatch(conn, secret)
+        data = time.strftime("%I:%M:%S ->") + netCatch(conn, secret)
         if data != 1:
             writeToScreen(data, username_array[conn])
 
